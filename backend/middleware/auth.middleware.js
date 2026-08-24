@@ -11,7 +11,7 @@ const { admin } = require('../config/firebase-admin');
 // Same admin UID used on the frontend (see frontend/js/firebase.js).
 // Kept here too so admin checks are enforced server-side, not just
 // in the UI.
-const ADMIN_UID = 'vBBGnL7gWNdnLYDDIe2GvCBlSas1';
+const ADMIN_UID = 'ZTSuTVAZdphkD85qGPMxagsHPtJ3';
 
 /**
  * requireAuth — verifies the Bearer token and attaches the decoded
