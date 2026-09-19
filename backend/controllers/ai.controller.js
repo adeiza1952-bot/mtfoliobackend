@@ -44,7 +44,7 @@ async function generateCoverLetter(req, res) {
     }
 
     const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.7-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,10 +56,18 @@ async function generateCoverLetter(req, res) {
     );
 
     if (!geminiRes.ok) {
-      // Log the real status for debugging, but never forward Gemini's
-      // raw response body (which could include the request echoed
-      // back, or other details) to the client.
-      console.error('[ai.controller] Gemini API error:', geminiRes.status);
+      // Log the real status + Gemini's error body for debugging, but
+      // never forward it to the client (it could echo back parts of
+      // the request or other internal details). The API key is a URL
+      // query param on the request, never part of Gemini's response,
+      // so logging the response body here can't leak it.
+      let errBody;
+      try {
+        errBody = await geminiRes.text();
+      } catch (_) {
+        errBody = '<unreadable response body>';
+      }
+      console.error('[ai.controller] Gemini API error:', geminiRes.status, errBody);
       return res.status(502).json({ error: 'Cover letter generation failed. Please try again.' });
     }
 
